@@ -163,10 +163,43 @@ File.open 'tmp/manifest.webapp', 'w' do |f|
   HEREDOC
 end
 
+# Zip contents of tmp
+`zip tmp/package.zip tmp/index.html tmp/manifest.webapp`
+# Remove temp files
+`rm tmp/index.html tmp/manifest.webapp`
 
-# TODO
-# create other files...
-# zip up files...
+# Create mini manifest
+File.open 'tmp/package.manifest', 'w' do |f|
+  f << <<-HEREDOC
+{
+  "name": "#{app_name}",
+  "package_path": "http:/#{`ipconfig getifaddr 0`}:8000/package.zip",
+  "version": "1.0"
+}
+  HEREDOC
+end
 
+# Create install.html
+File.open 'tmp/install.html', 'w' do |f|
+  f << <<-HEREDOC
+<html>
+  <head><meta charset="utf8"></head>
+  <body>
+    <p>Packaged app installation page</p>
+    <script>
+      alert('hello world');
+      var manifestUrl = '/package.manifest';
+      var req = navigator.mozApps.installPackage(manifestUrl);
+      req.onsuccess = function() {
+        alert(this.result.origin);
+      };
+      req.onerror = function() {
+        alert(this.error.name);
+      };
+    </script>
+  </body>
+</html>
+  HEREDOC
+end
 # clean up ./tmp
 #FileUtils.rm_rf './tmp'
