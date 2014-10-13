@@ -182,8 +182,9 @@ end
 # Create install.html
 File.open 'tmp/install.html', 'w' do |f|
   f << <<-HEREDOC
+<!DOCTYPE html>
 <html>
-  <head><meta charset="utf8"></head>
+  <head><meta charset="utf-8"></head>
   <body>
     <p>Packaged app installation page</p>
     <script>
